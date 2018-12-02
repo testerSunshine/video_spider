@@ -18,7 +18,7 @@ class MysqlConn:
         self.cur = self.conn.cursor()
 
     def mysql_conn(self):
-        y = _get_yaml_local("config_loacl.yaml")
+        y = _get_yaml_local("config_video.yaml")
         conn = pymysql.connect(
             host=y["db"]["ip"],
             port=y["db"]["port"],

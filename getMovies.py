@@ -1,6 +1,8 @@
 import copy
+import threading
+import time
 
-from config.DbTools import MysqlConn
+from config.GetProxy import getProxy
 from config.RedisUtils import redisUtils
 from config.httpClint import HTTPClient
 from config.urlConf import urls
@@ -345,6 +347,10 @@ X战警：天启
         根据电影名字获取该电影id
         :return:
         """
+        t = threading.Thread(target=getProxy, args=(self,))
+        t.setDaemon(True)
+        t.start()
+        time.sleep(5)
         video_name = self.movies.split("\n")
         for _video_name in video_name:
             searchUrls = copy.copy(urls["search"])
@@ -356,6 +362,7 @@ X战警：天启
                     self.redisConn.lpush("movice", dict(movies_list))
             else:
                 print("暂时没搜索到相关电影资源")
+
 
 if __name__ == '__main__':
     g = getMovies()
