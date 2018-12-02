@@ -10,8 +10,9 @@ from config.urlConf import urls
 
 
 class commentThread(threading.Thread):
-    def __init__(self):
+    def __init__(self, threadingName):
         threading.Thread.__init__(self)
+        self.threadingName = threadingName
         self.httpClint = HTTPClient()
         self.mysqlConn = MysqlConn()
         self.redisConn = redisUtils().redis_conn()
@@ -48,10 +49,10 @@ class commentThread(threading.Thread):
                         start_time = datetime.datetime.strptime(start_time, '%Y-%m-%d %H:%M:%S') + datetime.timedelta(
                             seconds=-1)  # 转换为datetime类型，减1秒，避免获取到重复数据
                         start_time = datetime.datetime.strftime(start_time, '%Y-%m-%d %H:%M:%S')  # 转换为str
-                        print(f"当前正在爬取的电影为{movie_name}, 下次爬取评论的时间为：{start_time}")
+                        print(f"当前线程为{self.threadingName}, 当前正在爬取的电影为{movie_name}, 下次爬取评论的时间为：{start_time}")
                         self.redisConn.set(movie["nm"], start_time)
                     elif getCommnetRsp.get("total", "") == 0 or getCommnetRsp.get("cmts", "") == []:  # 如果不返回数据，就代表评论爬到底
-                        print("当前页面返回数据为0，判断爬取完成")
+                        print(f"当前线程为{self.threadingName}, 当前正在爬取的电影为{movie_name}, 当前页面返回数据为0，判断爬取完成")
                         self.redisConn.set(movie["nm"], "done")
                         break
                 except ValueError as e:
@@ -69,7 +70,7 @@ class commentThread(threading.Thread):
 if __name__ == '__main__':
     threadingPool = []
     for i in range(6):
-        u = commentThread()
+        u = commentThread(f"线程{i}")
         threadingPool.append(u)
     for t in threadingPool:
         t.start()
