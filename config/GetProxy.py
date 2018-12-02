@@ -19,17 +19,20 @@ def _set_header_default():
 def getProxy(session):
     for i in range(2000):
         url = "http://www.shiliuliu.cn/Tools/proxyIP.ashx?OrderNumber=1b2a9207e1638519d7ac96a34e67eb3a&poolIndex=65292&cache=1&qty=1"
-        proxyRsp = requests.get(url).content.decode()
-        proxie = {
-            # 'http://': '{}:{}'.format(proxyRsp["data"][0]["ip"], proxyRsp["data"][0]["port"]),
-            # 'http': 'http://{}:{}'.format(proxyRsp["data"][0]["ip"], proxyRsp["data"][0]["port"]),
-            # 'https': 'http://{}:{}'.format(proxyRsp["data"][0]["ip"], proxyRsp["data"][0]["port"]),
-            'http': 'http://{}'.format(proxyRsp.replace("\r\n", "")),
-            'https': 'http://{}'.format(proxyRsp.replace("\r\n", "")),
-        }
-        print(f"当前代理ip为: {proxie}")
-        session.httpClint.proxies = proxie
-        time.sleep(297)
+        try:
+            proxyRsp = requests.get(url).content.decode()
+            proxie = {
+                # 'http://': '{}:{}'.format(proxyRsp["data"][0]["ip"], proxyRsp["data"][0]["port"]),
+                # 'http': 'http://{}:{}'.format(proxyRsp["data"][0]["ip"], proxyRsp["data"][0]["port"]),
+                # 'https': 'http://{}:{}'.format(proxyRsp["data"][0]["ip"], proxyRsp["data"][0]["port"]),
+                'http': 'http://{}'.format(proxyRsp.replace("\r\n", "")),
+                'https': 'http://{}'.format(proxyRsp.replace("\r\n", "")),
+            }
+            print(f"当前代理ip为: {proxie}")
+            session.httpClint.proxies = proxie
+            time.sleep(297)
+        except:
+            continue
 
 
 def testProxy():

@@ -5,6 +5,7 @@ import time
 from collections import OrderedDict
 from time import sleep
 import requests
+import urllib3
 
 from config import logger
 
@@ -150,7 +151,8 @@ class HTTPClient(object):
                 else:
                     print(f"当前http请求异常，状态码为{response.status_code}")
                     sleep(urls["re_time"])
-            except (requests.exceptions.Timeout, requests.exceptions.ReadTimeout, requests.exceptions.ConnectionError) as e:
+            except (requests.exceptions.Timeout, requests.exceptions.ReadTimeout, requests.exceptions.ConnectionError,
+                    ConnectionResetError, urllib3.exceptions.ProtocolError, TimeoutError, urllib3.exceptions.NewConnectionError) as e:
                 print(f"当前代理连接异常，异常ip：{self.proxies}")
             except socket.error as e:
                 print(e)

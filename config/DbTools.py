@@ -322,7 +322,6 @@ class MysqlConn:
                         f"{comment_content}, {comment_content_time}, {comment_id}, {gender}, {nick_name}, {city_name}, {data_channel}, {box_office_create_time}),"
         sql = "insert into video_mouth_word (video_name, video_type, video_release_time, director, fra, video_rate, comment_rate, " \
               "comment_content, comment_content_time, comment_id, gender, nick_name, city_name, data_channel, box_office_create_time) values {}".format(sqlParms.rstrip(","))
-        print(sql)
         self.execute_m(sql)
 
 
