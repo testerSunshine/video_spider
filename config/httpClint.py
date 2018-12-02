@@ -1,6 +1,7 @@
 # -*- coding: utf8 -*-
 import json
 import socket
+import time
 from collections import OrderedDict
 from time import sleep
 import requests
@@ -29,6 +30,7 @@ class HTTPClient(object):
         """
         self.initS()
         self._cdn = None
+        self.proxies = None
 
     def initS(self):
         self._s = requests.Session()
@@ -125,6 +127,7 @@ class HTTPClient(object):
                 requests.packages.urllib3.disable_warnings()
                 response = self._s.request(method=method,
                                            timeout=10,
+                                           proxies=self.proxies,
                                            url="http://" + url_host + req_url,
                                            data=data,
                                            allow_redirects=allow_redirects,
@@ -140,7 +143,11 @@ class HTTPClient(object):
                         logger.log(
                             u"url: {} 返回参数为空".format(urls["req_url"]))
                         return error_data
+                elif response.status_code == 403:
+                    print(f"当前http请求异常，状态码为{response.status_code}, 休息一会儿")
+                    time.sleep(5)
                 else:
+                    print(f"当前http请求异常，状态码为{response.status_code}")
                     sleep(urls["re_time"])
             except (requests.exceptions.Timeout, requests.exceptions.ReadTimeout, requests.exceptions.ConnectionError) as e:
                 print(e)

@@ -7,6 +7,7 @@ from pymysql import DataError, InternalError
 
 from config import logger
 from config.YamlInfo import _get_yaml_local
+from testEmoji import filter_emoji
 
 
 class MysqlConn:
@@ -308,7 +309,7 @@ class MysqlConn:
             fra = self.conn.escape(movice.get("fra", ""))
             video_rate = self.conn.escape(str(movice.get("sc", "")))
             comment_rate = self.conn.escape(data.get("score", ""))
-            comment_content = self.conn.escape(data.get("content", ""))
+            comment_content = filter_emoji(self.conn.escape(data.get("content", "")))
             comment_content_time = self.conn.escape(data.get("startTime", ""))
             comment_id = self.conn.escape(data.get("id", 0))
             gender = self.conn.escape(data.get("gender", 3))
