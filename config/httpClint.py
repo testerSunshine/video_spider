@@ -104,6 +104,7 @@ class HTTPClient(object):
         req_url = urls.get("req_url", "")
         re_try = urls.get("re_try", 0)
         s_time = urls.get("s_time", 0)
+        http = urls.get("http", "") or "https"
         error_data = {"code": 99999, "message": u"重试次数达到上限"}
         if data:
             method = "post"
@@ -126,9 +127,9 @@ class HTTPClient(object):
                 sleep(s_time)
                 requests.packages.urllib3.disable_warnings()
                 response = self._s.request(method=method,
-                                           timeout=10,
+                                           timeout=3,
                                            proxies=self.proxies,
-                                           url="http://" + url_host + req_url,
+                                           url=http + "://" + url_host + req_url,
                                            data=data,
                                            allow_redirects=allow_redirects,
                                            verify=False,
@@ -150,7 +151,7 @@ class HTTPClient(object):
                     print(f"当前http请求异常，状态码为{response.status_code}")
                     sleep(urls["re_time"])
             except (requests.exceptions.Timeout, requests.exceptions.ReadTimeout, requests.exceptions.ConnectionError) as e:
-                print(e)
+                print(f"当前代理连接异常，异常ip：{self.proxies}")
             except socket.error as e:
                 print(e)
         return error_data

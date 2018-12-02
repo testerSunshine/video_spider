@@ -1,3 +1,4 @@
+import datetime
 import random
 
 from config.DbTools import MysqlConn
@@ -19,28 +20,27 @@ class videoDay:
         """
         GetMovieDayBoxOfficeListUrl = urls.get("GetMovieDayBoxOfficeList", "")
 
-        while self.redisConn.llen("offset"):
-            _date = self.redisConn.rpop("offset")
-            data = {
-                "r": random.random(),
-                "UserID": "",
-                "DateSort": "Day",
-                "Date": _date,
-                "sDate": _date,
-                "eDate": _date,
-                "Index": "102,201,202,205,203,211,221,222,606,225,251,801,604",
-                "Line": "",
-                "City": "",
-                "CityLevel": "",
-                "ServicePrice": 1,
-                "PageIndex": 1,
-                "PageSize": 40,
-                "Order": 201,
-                "OrderType": "DESC"
-            }
-            GetMovieDayBoxOfficeListRsp = self.httpClint.send(urls=GetMovieDayBoxOfficeListUrl, data=data)
-            GetMovieDayBoxOfficeListData = GetMovieDayBoxOfficeListRsp["Data"]["Table2"]
-            self.mysqlConn.insert_video_day(GetMovieDayBoxOfficeListData, _date, self.redisConn)
+        _date = datetime.datetime.strftime(datetime.datetime.now(), '%Y-%m-%d', )
+        data = {
+            "r": random.random(),
+            "UserID": "",
+            "DateSort": "Day",
+            "Date": _date,
+            "sDate": _date,
+            "eDate": _date,
+            "Index": "102,201,202,205,203,211,221,222,606,225,251,801,604",
+            "Line": "",
+            "City": "",
+            "CityLevel": "",
+            "ServicePrice": 1,
+            "PageIndex": 1,
+            "PageSize": 40,
+            "Order": 201,
+            "OrderType": "DESC"
+        }
+        GetMovieDayBoxOfficeListRsp = self.httpClint.send(urls=GetMovieDayBoxOfficeListUrl, data=data)
+        GetMovieDayBoxOfficeListData = GetMovieDayBoxOfficeListRsp["Data"]["Table2"]
+        self.mysqlConn.insert_video_day(GetMovieDayBoxOfficeListData, _date, self.redisConn)
 
 
 if __name__ == '__main__':

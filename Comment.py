@@ -67,7 +67,7 @@ class commentThread(threading.Thread):
 
 if __name__ == '__main__':
     threadingPool = []
-    for i in range(8):
+    for i in range(6):
         u = commentThread()
         threadingPool.append(u)
     for t in threadingPool:

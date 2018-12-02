@@ -71,6 +71,7 @@ urls = {
         "req_type": "get",
         "Referer": "https://m.maoyan.com",
         "Host": "m.maoyan.com",
+        "http": "http",
         "re_try": 1,
         "re_time": 0.1,
         "is_logger": True,
