@@ -52,7 +52,10 @@ class commentThread(threading.Thread):
                     getCommnetRsp = self.httpClint.send(commentUrls)
                     if getCommnetRsp.get("cmts", ""):
                         self.mysqlConn.insert_comments(getCommnetRsp.get("cmts", ""), movie)
-                        start_time = getCommnetRsp.get("cmts", "")[-1]['startTime']  # 获得末尾评论的时间
+                        for index in range(1, 4):
+                            start_time = getCommnetRsp.get("cmts", "")[index * -1]['startTime']  # 获得末尾评论的时间
+                            if start_time:
+                                break
                         start_time = datetime.datetime.strptime(start_time, '%Y-%m-%d %H:%M:%S') + datetime.timedelta(
                             seconds=-1)  # 转换为datetime类型，减1秒，避免获取到重复数据
                         start_time = datetime.datetime.strftime(start_time, '%Y-%m-%d %H:%M:%S')  # 转换为str
