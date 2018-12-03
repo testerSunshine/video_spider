@@ -140,7 +140,7 @@ class HTTPClient(object):
                         if is_logger:
                             logger.log(
                                 u"出参：{0}".format(response.content.decode()))
-                        return json.loads(response.content) if urls["is_json"] else response.content
+                        return json.loads(response.content.decode()) if urls["is_json"] else response.content
                     else:
                         logger.log(
                             u"url: {} 返回参数为空".format(urls["req_url"]))
