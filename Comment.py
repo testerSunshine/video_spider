@@ -21,7 +21,10 @@ class commentThread(threading.Thread):
         t = threading.Thread(target=getProxy, args=(self, ))
         t.setDaemon(True)
         t.start()
-        self.getComment()
+        try:
+            self.getComment()
+        except:
+            pass
 
     def getComment(self):
         """
@@ -31,18 +34,19 @@ class commentThread(threading.Thread):
         # delta = datetime.timedelta(days=1)
 
         while self.redisConn.llen("movice"):
-            movie = eval(self.redisConn.rpop("movice").decode())
+            movie = {'cat': '动作,冒险,科幻', 'dir': '迈克尔·贝', 'dur': 166, 'enm': 'Transformers: Age of Extinction', 'fra': '美国,中国香港', 'frt': '2014-06-27,2014-06-19', 'globalReleased': True, 'id': 78379, 'img': 'http://p0.meituan.net/w.h/movie/aca339a0eb17d3e8e092e787407d4a07293878.jpg', 'movieType': 0, 'nm': '变形金刚4：绝迹重生', 'onlinePlay': False, 'pubDesc': '2014-06-27大陆上映', 'rt': '2014-06-27', 'sc': 9.2, 'show': '', 'showst': 2, 'star': '马克·沃尔伯格,斯坦利·图齐,妮可拉·佩尔茨', 'type': 0, 'ver': '2D/3D/IMAX 3D', 'vodPlay': False, 'wish': 113801, 'wishst': 0, 'version': 'v3d imax', 'spider_time': ['2016-01-14 18:45:15']}
             print(movie)
             offset = movie.get("offset", 0)
             movie_name = movie["nm"]
             # start_time = movie.get("spider_time", datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))  # 获取当前时间，从当前时间向前获取
             start_time = self.redisConn.get(movie_name)
-            print(start_time)
+            print("start_time", start_time)
             if start_time == "done" or start_time is None:
                 start_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')  # 获取当前时间，从当前时间向前获取
             while 1:
                 try:
                     commentUrls = copy.copy(urls["comments"])
+                    start_time = start_time.decode() if isinstance(start_time, bytes) else start_time
                     commentUrls["req_url"] = commentUrls["req_url"].format(movie.get("id"), offset, start_time)
                     # offset += 15
                     getCommnetRsp = self.httpClint.send(commentUrls)
@@ -71,7 +75,7 @@ class commentThread(threading.Thread):
 
 if __name__ == '__main__':
     threadingPool = []
-    for i in range(6):
+    for i in range(1):
         u = commentThread(f"线程{i}")
         threadingPool.append(u)
     for t in threadingPool:
