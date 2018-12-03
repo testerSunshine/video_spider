@@ -36,7 +36,9 @@ class commentThread(threading.Thread):
             offset = movie.get("offset", 0)
             movie_name = movie["nm"]
             # start_time = movie.get("spider_time", datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))  # 获取当前时间，从当前时间向前获取
-            start_time = self.redisConn.get(movie["nm"].decode()) or datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')  # 获取当前时间，从当前时间向前获取
+            start_time = self.redisConn.get(movie["nm"].decode())
+            if start_time == "done":
+                start_time = datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')  # 获取当前时间，从当前时间向前获取
             while 1:
                 try:
                     commentUrls = copy.copy(urls["comments"])
