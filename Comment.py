@@ -34,7 +34,7 @@ class commentThread(threading.Thread):
         # delta = datetime.timedelta(days=1)
 
         while self.redisConn.llen("movice"):
-            movie = {'cat': '动作,冒险,科幻', 'dir': '迈克尔·贝', 'dur': 166, 'enm': 'Transformers: Age of Extinction', 'fra': '美国,中国香港', 'frt': '2014-06-27,2014-06-19', 'globalReleased': True, 'id': 78379, 'img': 'http://p0.meituan.net/w.h/movie/aca339a0eb17d3e8e092e787407d4a07293878.jpg', 'movieType': 0, 'nm': '变形金刚4：绝迹重生', 'onlinePlay': False, 'pubDesc': '2014-06-27大陆上映', 'rt': '2014-06-27', 'sc': 9.2, 'show': '', 'showst': 2, 'star': '马克·沃尔伯格,斯坦利·图齐,妮可拉·佩尔茨', 'type': 0, 'ver': '2D/3D/IMAX 3D', 'vodPlay': False, 'wish': 113801, 'wishst': 0, 'version': 'v3d imax', 'spider_time': ['2016-01-14 18:45:15']}
+            movie = eval(self.redisConn.rpop("movice").decode())
             print(movie)
             offset = movie.get("offset", 0)
             movie_name = movie["nm"]
