@@ -35,8 +35,9 @@ class MysqlConn:
             return "please input sql"
         else:
             try:
+                startTime = datetime.datetime.now()
                 self.cur.execute(sql)
-                logger.log(u"数据执行完毕..")
+                logger.log(u"数据执行完毕, 耗时{}ms".format((datetime.datetime.now() - startTime).microseconds / 1000))
                 return self.cur.fetchall()
             except DataError as e:
                 logger.log(e)

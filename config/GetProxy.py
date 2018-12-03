@@ -18,7 +18,7 @@ def _set_header_default():
 
 def getProxy(session):
     for i in range(2000):
-        url = "http://www.shiliuliu.cn/Tools/proxyIP.ashx?OrderNumber=1b2a9207e1638519d7ac96a34e67eb3a&poolIndex=65292&cache=1&qty=1"
+        url = "http://www.shiliuliu.cn/Tools/proxyIP.ashx?OrderNumber=f6428047dde5d20594ba38d5269c7ef9&poolIndex=20634&cache=1&qty=1"
         try:
             proxyRsp = requests.get(url).content.decode()
             proxie = {

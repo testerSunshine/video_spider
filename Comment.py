@@ -36,8 +36,8 @@ class commentThread(threading.Thread):
             offset = movie.get("offset", 0)
             movie_name = movie["nm"]
             # start_time = movie.get("spider_time", datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'))  # 获取当前时间，从当前时间向前获取
-            start_time = self.redisConn.get(movie["nm"]) or datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')  # 获取当前时间，从当前时间向前获取
-            while start_time != "done":
+            start_time = self.redisConn.get(movie["nm"].decode()) or datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S')  # 获取当前时间，从当前时间向前获取
+            while 1:
                 try:
                     commentUrls = copy.copy(urls["comments"])
                     commentUrls["req_url"] = commentUrls["req_url"].format(movie.get("id"), offset, start_time)
@@ -53,7 +53,6 @@ class commentThread(threading.Thread):
                         self.redisConn.set(movie["nm"], start_time)
                     elif getCommnetRsp.get("total", "") == 0 or getCommnetRsp.get("cmts", "") == []:  # 如果不返回数据，就代表评论爬到底
                         print(f"当前线程为{self.threadingName}, 当前正在爬取的电影为{movie_name}, 当前页面返回数据为0，判断爬取完成")
-                        self.redisConn.set(movie["nm"], "done")
                         break
                 except ValueError as e:
                     print(f"日期转化失败: {e}")
