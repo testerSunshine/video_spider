@@ -107,7 +107,8 @@ class MysqlConn:
                 print(f"电影id: {box_office_id_end} 未在列表内，将被添加进redis")
                 redisConn.lpush("box_office_id_end", box_office_id_end)
         sql = "insert into video_boxofficeday (box_office_id, box_office_id_end, top, video_name, tickets_day, sum_box_office, avg_box_office," \
-              f"avg_show_people, audience_count, show_count, release_days, box_office_time, attendance, offer_seat_percent, box_percent, box_office_create_time, data_channel) values {sqlParms}".rstrip(",")
+              f"avg_show_people, audience_count, show_count, release_days, box_office_time, attendance, offer_seat_percent, box_percent, box_office_create_time, data_channel) values {sqlParms}".rstrip(
+            ",")
         print(sql)
         self.execute_m(sql)
 
@@ -321,8 +322,9 @@ class MysqlConn:
                 datetime.datetime.strftime(datetime.datetime.now(), '%Y-%m-%d %H:%M:%S', ))
             sqlParms += f"({video_name}, {video_type}, {video_release_time}, {director}, {fra}, {video_rate}, {comment_rate}," \
                         f"{comment_content}, {comment_content_time}, {comment_id}, {gender}, {nick_name}, {city_name}, {data_channel}, {box_office_create_time}),"
-        sql = "insert into video_mouth_word (video_name, video_type, video_release_time, director, fra, video_rate, comment_rate, " \
-              "comment_content, comment_content_time, comment_id, gender, nick_name, city_name, data_channel, box_office_create_time) values {}".format(sqlParms.rstrip(","))
+        sql = "insert into video_mouth_word2 (video_name, video_type, video_release_time, director, fra, video_rate, comment_rate, " \
+              "comment_content, comment_content_time, comment_id, gender, nick_name, city_name, data_channel, box_office_create_time) values {}".format(
+            sqlParms.rstrip(","))
         self.execute_m(sql)
 
 
@@ -330,76 +332,10 @@ if __name__ == "__main__":
     conn = MysqlConn()
     # for id, url in conn.select_for_table("zhihu_topicinfo", "topic_is_spider=0", "id", "topic_little_url"):
     #     print id, url
-    conn.insert_video_day([{
-        "Irank": 1,
-        "DboMovieID": 35457,
-        "EntMovieID": 678587,
-        "MovieName": "无名之辈",
-        "IsEnHave": 1,
-        "ColumnList": "35457|678587|无名之辈|13|408232641.05|",
-        "BoxOffice": 6214662.43,
-        "ShowCount": 85478,
-        "AudienceCount": 178242,
-        "OfferSeat": 11091787,
-        "Attendance": 1.61,
-        "OfferSeatPercent": 28.97,
-        "SumBoxOffice": 408232641.05,
-        "BoxPercent": 37.89,
-        "ShowPercent": 27.87,
-        "AvgBoxOffice": 35.0,
-        "AvgShowPeople": 2.0,
-    }, {
-        "Irank": 2,
-        "DboMovieID": 35790,
-        "EntMovieID": 662209,
-        "MovieName": "毒液：致命守护者",
-        "IsEnHave": 1,
-        "ColumnList": "35790|662209|毒液：致命守护者|20|1707278789.94|",
-        "BoxOffice": 3212215.72,
-        "ShowCount": 69646,
-        "AudienceCount": 89508,
-        "OfferSeat": 9910829,
-        "Attendance": 0.90,
-        "OfferSeatPercent": 25.89,
-        "SumBoxOffice": 1707278789.94,
-        "BoxPercent": 19.59,
-        "ShowPercent": 22.71,
-        "AvgBoxOffice": 36.0,
-        "AvgShowPeople": 1.0,
-    }, {
-        "Irank": 3,
-        "DboMovieID": 35842,
-        "EntMovieID": 678471,
-        "MovieName": "无敌破坏王2：大闹互联网",
-        "IsEnHave": 1,
-        "ColumnList": "35842|678471|无敌破坏王2：大闹互联网|6|155430784.70|",
-        "BoxOffice": 2675402.56,
-        "ShowCount": 50291,
-        "AudienceCount": 72230,
-        "OfferSeat": 6673761,
-        "Attendance": 1.08,
-        "OfferSeatPercent": 17.43,
-        "SumBoxOffice": 155430784.70,
-        "BoxPercent": 16.31,
-        "ShowPercent": 16.40,
-        "AvgBoxOffice": 37.0,
-        "AvgShowPeople": 1.0,
-    }, {
-        "Irank": 4,
-        "DboMovieID": 35839,
-        "EntMovieID": 682016,
-        "MovieName": "憨豆特工3",
-        "IsEnHave": 1,
-        "ColumnList": "35839|682016|憨豆特工3|6|98422674.63|",
-        "BoxOffice": 1942545.08,
-        "ShowCount": 50438,
-        "AudienceCount": 63653,
-        "OfferSeat": 5514758,
-        "Attendance": 1.15,
-        "OfferSeatPercent": 14.41,
-        "SumBoxOffice": 98422674.63,
-        "BoxPercent": 11.84,
-        "ShowPercent": 16.44,
-        "AvgBoxOffice": 31.0,
-        "AvgShowPeople": 1.0,
-    }], "2012-03-05")
+    sql = "select *, month(box_office_time)from video_boxofficeday ORDER BY sum_box_office DESC ;"
+    result = conn.execute_m(sql)
+    num = 0
+    num1 = 30
+    for i in range(len(result)):
+        num += 30
+    print(result[0, 30])

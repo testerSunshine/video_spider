@@ -18,7 +18,7 @@ def _set_header_default():
 
 def getProxy(session):
     for i in range(2000):
-        url = "http://www.shiliuliu.cn/Tools/proxyIP.ashx?OrderNumber=f6428047dde5d20594ba38d5269c7ef9&poolIndex=20634&cache=1&qty=1"
+        url = "http://123.58.6.163:3314/Tools/proxyIP.ashx?OrderNumber=c1e925b8141e6a150c478d890298bc25&poolIndex=95106&cache=1&qty=1"
         try:
             proxyRsp = requests.get(url).content.decode()
             proxie = {
@@ -35,15 +35,15 @@ def getProxy(session):
             continue
 
 
-def testProxy():
-    proxy = getProxy()
-    # proxy = {'http': 'http://183.129.207.82:11108'}
-    print(proxy)
-    # url = "http://icanhazip.com"
-    url = "http://httpbin.org/ip"
-    print(requests.get(url, proxies=proxy, timeout=2, headers=_set_header_default()).content)
+def proxyTest():
+    for i in range(1000):
+        proxy1 = requests.get("http://0.0.0.0:8080/get/").content.decode()
+        proxy = {'http': f'http://{proxy1}'}
+        # url = "http://icanhazip.com"
+        url = "http://httpbin.org/ip"
+        print(requests.get(url, proxies=proxy, timeout=5, headers=_set_header_default()).content.decode())
 
 
 if __name__ == '__main__':
-    testProxy()
+    proxyTest()
 

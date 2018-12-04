@@ -60,7 +60,7 @@ class commentThread(threading.Thread):
                             seconds=-1)  # 转换为datetime类型，减1秒，避免获取到重复数据
                         start_time = datetime.datetime.strftime(start_time, '%Y-%m-%d %H:%M:%S')  # 转换为str
                         print(f"当前线程为{self.threadingName}, 当前正在爬取的电影为{movie_name}, 下次爬取评论的时间为：{start_time}")
-                        self.redisConn.set(movie["nm"], start_time)
+                        self.redisConn.set(movie["nm"], start_time, 60*60*24*365)
                     elif getCommnetRsp.get("total", "") == 0 or getCommnetRsp.get("cmts", "") == []:  # 如果不返回数据，就代表评论爬到底
                         print(f"当前线程为{self.threadingName}, 当前正在爬取的电影为{movie_name}, 当前页面返回数据为0，判断爬取完成")
                         break
@@ -79,7 +79,7 @@ class commentThread(threading.Thread):
 if __name__ == '__main__':
     threadingPool = []
     for i in range(1):
-        u = commentThread(f"线程{i}")
+        u = commentThread(f"线程{i+1}")
         threadingPool.append(u)
     for t in threadingPool:
         t.start()

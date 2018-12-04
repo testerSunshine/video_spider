@@ -19,8 +19,11 @@ redisConn = redisUtils().redis_conn()
 #     dates.append(offset.strftime('%Y-%m-%d'))
 # redisConn.lpush("box_office_id_end", 629426)
 # print(num)
-print(redisConn.llen("movice"))
-while redisConn.llen("movice"):
-    print(redisConn.rpop("movice"))
+# print(redisConn.llen("movice"))
+# while redisConn.llen("movice"):
+#     print(redisConn.rpop("movice"))
+
+
+print(redisConn.get("test"))
 
 
