@@ -20,7 +20,8 @@ class videoDay:
         """
         GetMovieDayBoxOfficeListUrl = urls.get("GetMovieDayBoxOfficeList", "")
 
-        _date = datetime.datetime.strftime(datetime.datetime.now(), '%Y-%m-%d', )
+        _date = datetime.datetime.strftime(datetime.datetime.strptime(datetime.datetime.strftime(datetime.datetime.now(), '%Y-%m-%d', ),
+                                           '%Y-%m-%d') + datetime.timedelta(days=-1), '%Y-%m-%d')
         data = {
             "r": random.random(),
             "UserID": "",
