@@ -17,9 +17,12 @@ def _set_header_default():
 
 
 requests.packages.urllib3.disable_warnings()
-for i in range(20000):
-    url = f"https://movie.douban.com/j/search_subjects?type=movie&tag=%E7%83%AD%E9%97%A8&sort=recommend&page_limit=20&page_start={page_start}"
-    page_start += 20
-    time.sleep(2)
-    print(requests.get(url, verify=False, headers=_set_header_default()).content.decode())
+# for i in range(20000):
+#     # url = f"https://movie.douban.com/j/search_subjects?type=movie&tag=%E7%83%AD%E9%97%A8&sort=recommend&page_limit=20&page_start={page_start}"
+#     url = "http://pf.maoyan.com/movie/1227795"
+#     page_start += 20
+#     time.sleep(2)
+#     print(requests.get(url, verify=False, headers=_set_header_default()).content.decode())
 
+
+print(requests.get("http://pf.maoyan.com/movie/1227795", verify=False, headers=_set_header_default()).content.decode())

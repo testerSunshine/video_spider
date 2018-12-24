@@ -1,3 +1,5 @@
+import datetime
+
 import redis
 
 
@@ -154,10 +156,9 @@ X战警：逆转未来
 驯龙高手番外篇：龙的礼物
 黑衣人3
 黑衣人重启版3
-龙珠Z剧场版2：世界最強的高手
-    """.split("\n")
+龙珠Z剧场版2：世界最強的高手""".split("\n")
     r = redisUtils()
     conn = r.redis_conn()
     for m in movie:
-        conn.set(m, "2010-01-01 20:58:03", 60*60*24*365)
+        conn.set(m, datetime.datetime.now().strftime('%Y-%m-%d %H:%M:%S'), 60*60*24*365)
         print(f"电影{m}", conn.get(m).decode())

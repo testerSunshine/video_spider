@@ -180,7 +180,7 @@ class MysqlConn:
         print(sql)
         self.execute_m(sql)
 
-    def insert_row_piece(self, row_piece_data):
+    def insert_row_piece(self, row_piece_data, MovieName=None):
         """
         排片数据
         video_name = models.CharField("影片名称", max_length=64, default=None)
@@ -196,15 +196,32 @@ class MysqlConn:
         :return:
         """
         print("row_piece_data", row_piece_data)
-        video_name = self.conn.escape(row_piece_data.get("MovieName", ""))
-        buy_ticket_index = self.conn.escape(row_piece_data.get("BuyTicketIndex", ""))
-        ren_zhi_index = self.conn.escape(row_piece_data.get("RenZhiIndex", ""))
-        rap_index = self.conn.escape(row_piece_data.get("RapIndex", ""))
-        data_channel = self.conn.escape("艺恩")
-        box_office_create_time = self.conn.escape(
-            datetime.datetime.strftime(datetime.datetime.now(), '%Y-%m-%d %H:%M:%S', ))
-        sql = "insert into video_row_piece (video_name, buy_ticket_index, ren_zhi_index, rap_index, data_channel, box_office_create_time) " \
-              f"VALUES ({video_name}, {buy_ticket_index}, {ren_zhi_index}, {rap_index}, {data_channel}, {box_office_create_time})"
+        if isinstance(row_piece_data, list):
+            sqlParms = ""
+            for data in row_piece_data:
+                video_name = self.conn.escape(MovieName)
+                buy_ticket_index = self.conn.escape(data.get("BuyTicketIndex", ""))
+                ren_zhi_index = self.conn.escape(data.get("RenZhiIndex", ""))
+                rap_index = self.conn.escape(data.get("RapIndex", ""))
+                insert_date = self.conn.escape(data.get("InsertDate", ""))
+                data_channel = self.conn.escape("中国电影网")
+                box_office_create_time = self.conn.escape(
+                    datetime.datetime.strftime(datetime.datetime.now(), '%Y-%m-%d %H:%M:%S', ))
+                sqlParms += f"({video_name}, {buy_ticket_index}, {ren_zhi_index}, {rap_index}, {insert_date}, {data_channel}, {box_office_create_time}),"
+            sql = "insert into video_row_piece1 (video_name, buy_ticket_index, ren_zhi_index, rap_index, insert_date, data_channel, box_office_create_time) " \
+                  f"values {sqlParms}".rstrip(",")
+        elif isinstance(row_piece_data, dict):
+            video_name = self.conn.escape(row_piece_data.get("MovieName", ""))
+            buy_ticket_index = self.conn.escape(row_piece_data.get("BuyTicketIndex", ""))
+            ren_zhi_index = self.conn.escape(row_piece_data.get("RenZhiIndex", ""))
+            rap_index = self.conn.escape(row_piece_data.get("RapIndex", ""))
+            data_channel = self.conn.escape("艺恩")
+            box_office_create_time = self.conn.escape(
+                datetime.datetime.strftime(datetime.datetime.now(), '%Y-%m-%d %H:%M:%S', ))
+            sql = "insert into video_row_piece (video_name, buy_ticket_index, ren_zhi_index, rap_index, data_channel, box_office_create_time) " \
+                  f"VALUES ({video_name}, {buy_ticket_index}, {ren_zhi_index}, {rap_index}, {data_channel}, {box_office_create_time})"
+        else:
+            sql = ""
         print(sql)
         self.execute_m(sql)
 
@@ -327,15 +344,84 @@ class MysqlConn:
             sqlParms.rstrip(","))
         self.execute_m(sql)
 
+    def get_video_info(self):
+        """
+        获取电影名字，电影id， 电影end_id
+        :return:
+        """
+        sql = "SELECT video_name, box_office_id, box_office_id_end, box_office_time FROM video_boxofficeday  group by video_name;"
+        get_video_info_rsp = self.execute_m(sql)
+        return get_video_info_rsp
+
+    def insert_marketing_data1(self, marketing_data, videoName, dataType, videoDay):
+        """
+        插入城市排名中的数据
+        CREATE TABLE `video_marketing_data1` (
+          `id` int(11) NOT NULL AUTO_INCREMENT,
+          `video_name` varchar(64) NOT NULL COMMENT '电影名字',
+          `data_type` varchar(64) NOT NULL COMMENT '获取数据的类型',
+          `video_day` varchar(64) NOT NULL COMMENT '电影哪天的数据，每部电影默认15天',
+          `city_name` varchar(64) DEFAULT NULL COMMENT '城市名称',
+          `province_name` varchar(64) DEFAULT NULL COMMENT '省份名称',
+          `box_office` DOUBLE(20, 5) DEFAULT NULL COMMENT '当日总票房',
+          `show_count` int(11) DEFAULT NULL COMMENT '上映场次',
+          `audience_count` int(11) DEFAULT NULL COMMENT '人次',
+          `offerseat` int(11) DEFAULT NULL COMMENT '排座',
+          `attendance` DOUBLE(10, 2) DEFAULT NULL COMMENT '上座率',
+          `show_percent` DOUBLE(10, 2) DEFAULT NULL COMMENT '场次占比',
+          `avg_box_office` int(11) DEFAULT NULL COMMENT '平均票价',
+          `supply_index` DOUBLE(10, 2) DEFAULT NULL COMMENT '供需指数',
+          `city_show_count` int(11) DEFAULT NULL COMMENT '截止当天上映的总场数',
+          `show_share` DOUBLE(10, 2) DEFAULT NULL COMMENT '上映分享率',
+          `city_audience_count` int(11) DEFAULT NULL COMMENT '城市上座总和',
+          `people_share` DOUBLE(10, 2) DEFAULT NULL COMMENT '人分享率',
+          `advice_seat` DOUBLE(10, 2) DEFAULT NULL COMMENT '理想排座',
+          `AvgShowPeople` int(11) DEFAULT NULL COMMENT '场均上映人次',
+          `data_channel` varchar(32) NOT NULL COMMENT '数据来源',
+          `box_office_create_time` datetime(6) NOT NULL COMMENT '爬取时间',
+          PRIMARY KEY (`id`)
+        ) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8;
+        :return:
+        """
+        sqqParams = ""
+        for data in marketing_data:
+            video_name = self.conn.escape(videoName)
+            data_type = self.conn.escape(dataType)
+            video_day = self.conn.escape(videoDay)
+            city_name = self.conn.escape(data.get("CityName", ""))
+            province_name = self.conn.escape(data.get("ProvinceName", ""))
+            box_office = self.conn.escape(data.get("BoxOffice", 0))
+            show_count = self.conn.escape(data.get("ShowCount", 0))
+            audience_count = self.conn.escape(data.get("AudienceCount", 0))
+            offerseat = self.conn.escape(data.get("OfferSeat", 0))
+            attendance = self.conn.escape(data.get("Attendance", 0))
+            show_percent = self.conn.escape(data.get("ShowPercent", 0))
+            avg_box_office = self.conn.escape(data.get("AvgBoxOffice", 0))
+            supply_index = self.conn.escape(data.get("SupplyIndex", 0))
+            city_show_count = self.conn.escape(data.get("CityShowCount", 0))
+            show_share = self.conn.escape(data.get("ShowShare", 0))
+            city_audience_count = self.conn.escape(data.get("CityAudienceCount", 0))
+            people_share = self.conn.escape(data.get("PeopleShare", 0))
+            advice_seat = self.conn.escape(data.get("advice_seat", 0))
+            AvgShowPeople = self.conn.escape(data.get("AvgShowPeople", 0))
+            data_channel = self.conn.escape("艺恩")
+            box_office_create_time = self.conn.escape(
+                datetime.datetime.strftime(datetime.datetime.now(), '%Y-%m-%d %H:%M:%S', ))
+            sqqParams += f"({video_name}, {data_type}, {video_day}, {city_name}, {province_name}, {box_office}, {show_count}, {audience_count}," \
+                         f"{offerseat}, {attendance}, {show_percent}, {avg_box_office}, {supply_index}, {city_show_count}, {show_share}, {city_audience_count}," \
+                         f"{people_share}, {advice_seat}, {AvgShowPeople}, {data_channel}, {box_office_create_time}),"
+        sql = "insert into video_marketing_data1 (video_name, data_type, video_day, city_name, province_name, box_office, show_count, audience_count, " \
+              "offerseat, attendance, show_percent, avg_box_office, supply_index, city_show_count, show_share, city_audience_count," \
+              "people_share, advice_seat, AvgShowPeople, data_channel, box_office_create_time) VALUES {}".format(
+            sqqParams.rstrip(","))
+        print(sql)
+        self.execute_m(sql)
+
 
 if __name__ == "__main__":
     conn = MysqlConn()
     # for id, url in conn.select_for_table("zhihu_topicinfo", "topic_is_spider=0", "id", "topic_little_url"):
     #     print id, url
-    sql = "select *, month(box_office_time)from video_boxofficeday ORDER BY sum_box_office DESC ;"
-    result = conn.execute_m(sql)
-    num = 0
-    num1 = 30
-    for i in range(len(result)):
-        num += 30
-    print(result[0, 30])
+    result = conn.get_video_info()
+    for r in result:
+        print(r)

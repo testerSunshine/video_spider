@@ -1,6 +1,8 @@
 import copy
 import datetime
+import random
 import threading
+import time
 
 from config.DbTools import MysqlConn
 from config.GetProxy import getProxy
@@ -34,6 +36,7 @@ class commentThread(threading.Thread):
         # delta = datetime.timedelta(days=1)
 
         while self.redisConn.llen("movice"):
+            time.sleep(random.randint(0, 4))
             movie = eval(self.redisConn.rpop("movice").decode())
             print(movie)
             offset = movie.get("offset", 0)
